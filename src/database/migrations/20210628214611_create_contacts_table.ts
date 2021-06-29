@@ -6,9 +6,9 @@ export async function up(knex: Knex): Promise<void> {
     table.text("name").unique().notNullable();
     table.text("email").unique().notNullable();
     table.text("phone").nullable();
-    table.text("type").notNullable(); // PF ou PJ
+    table.enu('type', ["PF", "PJ"]).notNullable(); // PF ou PJ
     table.text("cpf_cnpj").notNullable();
-    table.text("status").notNullable(); // Ativo/Inativo
+    table.enu('status', ["Ativo", "Inativo"]).notNullable(); // Ativo/Inativo
     table.timestamp("dt_created_at").defaultTo(knex.fn.now());
     table.timestamp("dt_updated_at").defaultTo(knex.fn.now());
   });
