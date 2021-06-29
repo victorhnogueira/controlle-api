@@ -1,10 +1,10 @@
-import expres from 'express'
-import ContactController from './controllers/ContactController'
+import expres from "express";
+import ContactController from "./controllers/ContactController";
 
-const routes = expres.Router()
+const routes = expres.Router();
 
-routes.get('/', ContactController.getAll)
-routes.post('/', ContactController.create)
+routes.get("/", ContactController.getAll);
+routes.post("/", ContactController.create);
+routes.put("/:contactId", ContactController.update);
 
-
-export default routes
+export default routes;
