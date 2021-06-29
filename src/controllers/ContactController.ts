@@ -311,4 +311,42 @@ export default {
         .json({ error: "error updating contact data", details: error });
     }
   },
+  async inactivate(req: Request, res: Response) {
+    const { contactId } = req.params;
+
+    if (!contactId) {
+      return res.status(400).json({ error: "contactId not provided" });
+    }
+
+    try {
+      const contact = await knex("contacts").where("id", contactId);
+
+      if (contact.length === 0) {
+        return res
+          .status(400)
+          .json({ error: `contact with id ${contactId} not found` });
+      }
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: "contact data malformated", details: error });
+    }
+
+    try {
+      const updatedContact = await knex("contacts")
+        .where("id", contactId)
+        .update({
+          status: "Inativo",
+        })
+        .returning("*");
+
+      return res.status(200).json({
+        contact: updatedContact[0],
+      });
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: "error updating contact data", details: error });
+    }
+  },
 };
