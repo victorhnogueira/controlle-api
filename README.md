@@ -38,11 +38,13 @@ DATABASE_PASSWORD=
 
 ```
 
-3. Para iniciar o servidor em modo de desenvolvimento
+3. Inicie o servidor
+
+Para iniciar o servidor em modo de desenvolvimento
 ```bash
 > yarn start:dev
 ```
-Ou então, Para gerar uma versão para produção
+Ou então, para criar uma versão otimizada para produção
 ```bash
 > yarn build
 ```
