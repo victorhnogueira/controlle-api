@@ -230,10 +230,14 @@ export default {
           .json({ contact: createdContact[0], address: createdAddress[0] });
       } catch (error) {
         await knex("contacts").where("id", createdContact[0].id).del();
-        return res.status(400).json(error);
+        return res
+          .status(400)
+          .json({ error: "error saving contact address", details: error });
       }
     } catch (error) {
-      return res.status(400).json(error);
+      return res
+        .status(400)
+        .json({ error: "error saving contact", details: error });
     }
   },
 };
