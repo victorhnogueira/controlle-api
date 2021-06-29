@@ -303,6 +303,22 @@ export default {
       }
 
       if (email !== undefined) {
+        // check if contact email already exists
+        try {
+          const duplicatedContactEmail = await knex("contacts")
+            .where("email", email)
+            .andWhereNot("id", contactId);
+
+          if (duplicatedContactEmail.length >= 1) {
+            return res.status(400).json({
+              error: "contact e-mail already exists",
+            });
+          }
+        } catch (error) {
+          return res.status(400).json(error);
+        }
+
+        // check if is a valid email
         try {
           const isValidEmail = await deepMailValidator({
             email,
