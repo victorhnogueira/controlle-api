@@ -5,9 +5,13 @@ import deepMailValidator from "deep-email-validator";
 export default {
   async getAll(_: Request, res: Response) {
     try {
-      const contacts = await knex("contacts");
+      const contact = await knex("contacts").leftOuterJoin(
+        "contacts_address",
+        "contacts.id",
+        "contacts_address.id_contacts"
+      );
 
-      return res.status(200).json(contacts);
+      return res.status(200).json(contact);
     } catch (error) {
       return res.status(400).json(error);
     }
