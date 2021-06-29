@@ -151,6 +151,7 @@ export default {
       return res.status(400).json({ error: "city not provided" });
     }
 
+    /*
     if (!address?.state) {
       return res.status(400).json({ error: "state not provided" });
     }
@@ -190,6 +191,7 @@ export default {
         .status(400)
         .json({ error: "use the AA format for the state field" });
     }
+    */
 
     const validZipcode = /^\d{5}\-\d{3}$/.test(address?.zipcode);
 
