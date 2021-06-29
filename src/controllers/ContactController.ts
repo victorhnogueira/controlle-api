@@ -242,4 +242,73 @@ export default {
         .json({ error: "error saving contact", details: error });
     }
   },
+  async update(req: Request, res: Response) {
+    const { contactId } = req.params;
+    const { name, email, phone, type, cpf_cnpj, address } = req.body;
+
+    if (!contactId) {
+      return res.status(400).json({ error: "contactId not provided" });
+    }
+
+    try {
+      const contact = await knex("contacts").where("id", contactId);
+
+      if (contact.length === 0) {
+        return res
+          .status(400)
+          .json({ error: `contact with id ${contactId} not found` });
+      }
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: "contact data malformated", details: error });
+    }
+
+    try {
+      const updatedContact = await knex("contacts")
+        .where("id", contactId)
+        .update({
+          name,
+          email,
+          phone,
+          type,
+          cpf_cnpj,
+        })
+        .returning("*");
+
+      if (!address) {
+        return res.status(200).json({
+          contact: updatedContact[0],
+        });
+      } else {
+        try {
+          const updatedContactAddress = await knex("contacts_address")
+            .where("id_contacts", contactId)
+            .update({
+              zipcode: address.zipcode,
+              street: address.street,
+              number: address.number,
+              complement: address.complement,
+              district: address.district,
+              city: address.city,
+              state: address.state,
+            })
+            .returning("*");
+
+          return res.status(200).json({
+            contact: updatedContact[0],
+            address: updatedContactAddress[0],
+          });
+        } catch (error) {
+          return res
+            .status(400)
+            .json({ error: "error updating contact data", details: error });
+        }
+      }
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: "error updating contact data", details: error });
+    }
+  },
 };
