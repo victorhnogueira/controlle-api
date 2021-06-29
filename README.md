@@ -25,9 +25,9 @@ Para fazer uma cópia do projeto.
 ```bash
 > cd controlle-api
 ```
-2. Crie um arquivo `.env` na raiz do projeto, com os dados de conexão com o banco de dados.
+2. Crie um arquivo `.env` na raiz do projeto, e preencha com o numero da porta do servidor e com os dados de conexão com o  banco de dados.
 ```
-#Sever configuration
+#Sever port default: 3333
 PORT=
 
 #Database configuration
