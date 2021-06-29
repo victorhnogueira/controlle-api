@@ -258,6 +258,120 @@ export default {
           .status(400)
           .json({ error: `contact with id ${contactId} not found` });
       }
+
+      if (name !== undefined) {
+        // check if contact name already exists
+        try {
+          const duplicatedContactName = await knex("contacts")
+            .where("name", name)
+            .andWhereNot("id", contactId);
+
+          if (duplicatedContactName.length >= 1) {
+            return res.status(400).json({
+              error: "contact name already exists",
+            });
+          }
+        } catch (error) {
+          return res.status(400).json(error);
+        }
+      }
+
+      if (type !== undefined && !(type === "PF" || type === "PJ")) {
+        return res.status(400).json({ error: "type must be PF or PJ" });
+      }
+
+      if (type !== undefined && type === "PF") {
+        const isCPFCorrect = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/.test(cpf_cnpj);
+
+        if (!isCPFCorrect) {
+          return res.status(400).json({
+            error: "use the 000.000.000-00 format for the CPF field",
+          });
+        }
+      }
+
+      if (type !== undefined && type === "PJ") {
+        const isCNPJCorrect = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/.test(
+          cpf_cnpj
+        );
+
+        if (!isCNPJCorrect) {
+          return res.status(400).json({
+            error: "use the 00.000.000/0000-00 format for the CPF field",
+          });
+        }
+      }
+
+      if (email !== undefined) {
+        try {
+          const isValidEmail = await deepMailValidator({
+            email,
+            sender: email,
+            validateTypo: false,
+            validateDisposable: false,
+            validateMx: false,
+            validateSMTP: false,
+            validateRegex: true,
+          });
+
+          if (!isValidEmail.valid) {
+            return res.status(400).json({
+              error: "invalid email address",
+              reason: isValidEmail.reason,
+            });
+          }
+        } catch (error) {
+          return res.status(400).json(error);
+        }
+      }
+
+      if (address?.zipcode !== undefined) {
+        const validZipcode = /^\d{5}\-\d{3}$/.test(address?.zipcode);
+
+        if (!validZipcode) {
+          return res
+            .status(400)
+            .json({ error: "use the 00000-000 format for the zipcode field" });
+        }
+      }
+
+      if (address?.state !== undefined) {
+        const alowedStates = [
+          "AC",
+          "AL",
+          "AP",
+          "AM",
+          "BA",
+          "CE",
+          "DF",
+          "ES",
+          "GO",
+          "MA",
+          "MT",
+          "MS",
+          "MG",
+          "PA",
+          "PB",
+          "PR",
+          "PE",
+          "PI",
+          "RJ",
+          "RN",
+          "RS",
+          "RO",
+          "RR",
+          "SC",
+          "SP",
+          "SE",
+          "TO",
+        ];
+
+        if (!alowedStates.some((state) => state === address?.state)) {
+          return res
+            .status(400)
+            .json({ error: "use the AA format for the state field" });
+        }
+      }
     } catch (error) {
       return res
         .status(400)
